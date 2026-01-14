@@ -156,6 +156,14 @@ function patch_config() {
     ' -i "$WORKDIR/$SAIL_IOP_FILE"
     echo "Configured tracing for OtelCollector."
 
+  elif [[ "$WORKDIR" == *"telemetry-api"* ]]; then
+    # Force disable global access logging for telemetry API tests to ensure
+    # targetRef policies work correctly without interference from base.yaml
+    yq eval '
+      .spec.values.meshConfig.accessLogFile = ""
+    ' -i "$WORKDIR/$SAIL_IOP_FILE"
+    echo "Configured telemetry API tests with disabled global access logging."
+
   elif [[ "$WORKDIR" == *"pilot-"* ]]; then
     # Fix for TestTraffic/dns/a/ tests
     yq eval '
